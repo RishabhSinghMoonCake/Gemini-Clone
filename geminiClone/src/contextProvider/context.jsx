@@ -1,72 +1,83 @@
-import { createContext,useState } from "react";
+import { createContext, useState } from "react";
 import Gemini from "../config/gemini.js";
-
 
 export const Context = createContext();
 
 const ContextProvider = (props) => {
-
   const [input, setInput] = useState('');
-  const [recentPrompt,setRecentPrompt] = useState('');
-  const [prevPrompts , setPrevPrompts] = useState([]);
-  const [showResult , setShowResult] = useState(false);
+  const [recentPrompt, setRecentPrompt] = useState('');
+  const [prevPrompts, setPrevPrompts] = useState([]);
+  const [showResult, setShowResult] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resultData, setResultData] = useState('');
 
-  const delayPara = (index, nextWord)=>{
+  const delayPara = (index, nextWord) => {
+    setTimeout(() => {
+      setResultData(prev => prev + nextWord);
+    }, 75 * index);
+  };
 
-  }
-
-  const onSent = async () =>{
+  const onSent = async () => {
     setResultData('');
     setLoading(true);
     setShowResult(true);
-    setRecentPrompt(input)
+    setRecentPrompt(input);
+    setPrevPrompts(prev => [...prev, input]);
+
     let response;
     try {
       response = await Gemini(input);
-      setResultData(response);
+
+      if (typeof response !== 'string') {
+        console.error("Unexpected response type:", response);
+        setLoading(false);
+        return;
+      }
     } catch (error) {
-      console.log("gemini failed");
+      console.error("Gemini failed:", error);
+      setLoading(false);
+      return;
     }
-    let responseArray = response.split('**')
-    let newArray;
-    for(let i = 0;i<responseArray.length;i++)
-    {
-      if(i == 0 || i%2 === 0)
-      {
-        newArray += responseArray[i]
-      }
-      else
-      {
-        newArray += '<b>' + responseArray[i] + '</b>'
+
+    const responseArray = response.split('**');
+    let formatted = '';
+    for (let i = 0; i < responseArray.length; i++) {
+      if (i % 2 === 0) {
+        formatted += responseArray[i];
+      } else {
+        formatted += `<b>${responseArray[i]}</b>`;
       }
     }
-    setResultData(newArray);
+
+    const withLineBreaks = formatted.split('*').join('</br>');
+    const words = withLineBreaks.split(' ');
+
+    for (let i = 0; i < words.length; i++) {
+      delayPara(i, words[i] + ' ');
+    }
+
     setLoading(false);
-    setInput('')
-  }
+    setInput('');
+  };
 
   const contextValue = {
-    prevPrompts,
-    setPrevPrompts,
-    onSent,
+    input,
+    setInput,
     recentPrompt,
     setRecentPrompt,
+    prevPrompts,
+    setPrevPrompts,
     showResult,
     loading,
     resultData,
-    input,
-    setInput
-  }
+    onSent
+  };
 
   return (
     <Context.Provider value={contextValue}>
       {props.children}
     </Context.Provider>
-  )
+  );
+};
 
-
-}
-
-export default ContextProvider
+export default ContextProvider;
