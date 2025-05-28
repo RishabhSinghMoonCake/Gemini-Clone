@@ -1,5 +1,4 @@
 import { GoogleGenAI } from "@google/genai";
-import { resolveConfig } from "vite";
 
 const ai = new GoogleGenAI({ apiKey: "AIzaSyAG_KH1DZnpLJOmwj2HdgLwUmiWKn-W86k" });
 

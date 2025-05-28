@@ -15,16 +15,19 @@ const ContextProvider = (props) => {
 
 
 
-  const onSent = async (prompt) =>{
-
+  const onSent = async () =>{
     setResultData('');
     setLoading(true);
     setShowResult(true);
-    const response = await Gemini(input);
-    setResultData(response);
+    let response;
+    try {
+      response = await Gemini(input);
+      setResultData(response);
+    } catch (error) {
+      console.log("gemini failed");
+    }
     setLoading(false);
-    setInput('');
-    
+    setInput('')
   }
 
   const contextValue = {

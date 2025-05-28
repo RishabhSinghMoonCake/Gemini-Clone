@@ -27,7 +27,14 @@ function Main()
         <img src={assets.gemini_icon} alt="" />
       </div>
       <div className='middle-hello'>
-        <p>Hello, {user}</p>
+        {!showResult
+        ?<p>Hello, {user}</p>
+        :<div className='result'>
+          {resultData}
+        </div>
+        }
+        
+        
       </div>
       <div className='input-section'>
         <input className='input-content'  onChange={(e)=>handleInputContent(e.target.value)} value={input} type="text" placeholder='Ask Gemini' />
