@@ -74,3 +74,8 @@
 .input-section img{
   width: 25px;
 }
+
+.left-filler img{
+  width: 15px;
+  color: rgb(81, 81, 81);
+}
