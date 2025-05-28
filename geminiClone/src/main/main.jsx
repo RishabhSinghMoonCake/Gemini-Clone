@@ -26,11 +26,29 @@ function Main()
         <h2>Gemini</h2>
         <img src={assets.gemini_icon} alt="" />
       </div>
-      <div className='middle-hello'>
+      <div >
         {!showResult
-        ?<p>Hello, {user}</p>
+        ?
+        <div className='middle-hello'>
+          <p >Hello, {user}</p>
+        </div>
+        
         :<div className='result'>
-          {resultData}
+          <div className='result-title'>
+            <img src={assets.user_icon} alt="" />
+            <p>{recentPrompt}</p>
+          </div>
+          <div className="result-data">
+            <img src={assets.gemini_icon} alt="" />
+            {loading
+            ?<div className='loader'>
+              <hr />
+              <hr />
+              <hr />
+            </div>
+            :<p dangerouslySetInnerHTML={{__html:resultData}}></p>
+            }
+          </div>
         </div>
         }
         
