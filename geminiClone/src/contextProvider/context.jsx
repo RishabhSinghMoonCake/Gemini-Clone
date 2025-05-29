@@ -14,19 +14,26 @@ const ContextProvider = (props) => {
   const delayPara = (index, nextWord) => {
     setTimeout(() => {
       setResultData(prev => prev + nextWord);
-    }, 75 * index);
+    }, 30 * index);
   };
 
-  const onSent = async () => {
+  const newChat = ()=>{
+    setLoading(false);
+    setShowResult(false);
+
+  }
+
+  const onSent = async (prompt) => {
     setResultData('');
     setLoading(true);
     setShowResult(true);
-    setRecentPrompt(input);
-    setPrevPrompts(prev => [...prev, input]);
+    let resp = prompt || input;
+    setRecentPrompt(resp);
+    setPrevPrompts(prev => [...prev, resp]);
 
-    let response;
+    let response = '';
     try {
-      response = await Gemini(input);
+      response = await Gemini(resp);
 
       if (typeof response !== 'string') {
         console.error("Unexpected response type:", response);
@@ -70,7 +77,8 @@ const ContextProvider = (props) => {
     showResult,
     loading,
     resultData,
-    onSent
+    onSent,
+    newChat
   };
 
   return (
